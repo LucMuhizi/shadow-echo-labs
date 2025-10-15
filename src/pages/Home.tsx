@@ -32,11 +32,18 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 pt-32 pb-20">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+      <section className="container mx-auto px-4 pt-32 pb-20 relative">
+        {/* Animated background elements */}
+        <div className="absolute top-20 left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: "1s" }} />
+        
+        <div className="max-w-4xl mx-auto text-center animate-fade-in relative z-10">
+          <div className="inline-block mb-4 px-4 py-2 glass-card rounded-full animate-bounce-subtle">
+            <span className="text-sm font-semibold text-gradient-primary">Powered by ve(3,3) Tokenomics</span>
+          </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             The Next Generation{" "}
-            <span className="gradient-primary bg-clip-text text-transparent">
+            <span className="text-gradient-primary animate-shimmer bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_auto]">
               ve(3,3) DEX
             </span>
           </h1>
@@ -45,13 +52,13 @@ const Home = () => {
           </p>
           <div className="flex gap-4 justify-center">
             <Link to="/swap">
-              <Button size="lg" className="gradient-primary glow-primary transition-smooth hover:scale-105">
+              <Button size="lg" className="gradient-primary glow-primary-lg hover-glow">
                 Start Trading
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <Link to="/liquidity">
-              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10 transition-smooth">
+              <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10 hover-lift">
                 Add Liquidity
               </Button>
             </Link>
@@ -65,11 +72,11 @@ const Home = () => {
           {stats.map((stat, index) => (
             <Card
               key={index}
-              className="glass-card p-6 text-center transition-smooth hover:scale-105 animate-slide-up"
+              className="glass-card-hover p-6 text-center hover-lift animate-slide-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
-              <p className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</p>
+              <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary animate-float" style={{ animationDelay: `${index * 0.2}s` }} />
+              <p className="text-2xl md:text-3xl font-bold mb-1 text-gradient-primary">{stat.value}</p>
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </Card>
           ))}
@@ -86,10 +93,10 @@ const Home = () => {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="glass-card p-8 transition-smooth hover:scale-105 hover:glow-primary animate-slide-up"
+                className="glass-card-hover p-8 hover-glow animate-slide-up group"
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
-                <div className="w-12 h-12 gradient-primary rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 gradient-primary rounded-lg flex items-center justify-center mb-4 glow-primary group-hover:animate-bounce-subtle">
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>

@@ -1,12 +1,93 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowDownUp, Settings, ChevronDown } from "lucide-react";
+import { ArrowDownUp, Settings } from "lucide-react";
+import { useWallet } from "@/hooks/useWallet";
+import { useTokenBalance } from "@/hooks/useTokenBalance";
+import { useSwap } from "@/hooks/useSwap";
+import { TokenSelector, Token } from "@/components/TokenSelector";
+import { TOKEN_ADDRESSES } from "@/contracts/abis";
+import { toast } from "sonner";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Swap = () => {
+  const { address, isConnected } = useWallet();
+  const { approveToken, executeSwap, getAmountOut } = useSwap();
+  
+  const [fromToken, setFromToken] = useState<Token>({
+    symbol: 'ETH',
+    name: 'Ethereum',
+    address: TOKEN_ADDRESSES.WETH,
+  });
+  
+  const [toToken, setToToken] = useState<Token>({
+    symbol: 'USDC',
+    name: 'USD Coin',
+    address: TOKEN_ADDRESSES.USDC,
+  });
+  
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
+  const [isSwapping, setIsSwapping] = useState(false);
+  
+  const { formattedBalance: fromBalance, decimals: fromDecimals, refetch: refetchFrom } = useTokenBalance(
+    fromToken.address,
+    address
+  );
+  
+  const { formattedBalance: toBalance, refetch: refetchTo } = useTokenBalance(
+    toToken.address,
+    address
+  );
+
+  useEffect(() => {
+    if (fromAmount && parseFloat(fromAmount) > 0) {
+      getAmountOut(fromAmount, fromDecimals || 18, [fromToken.address, toToken.address]).then(
+        setToAmount
+      );
+    } else {
+      setToAmount("");
+    }
+  }, [fromAmount, fromToken, toToken, fromDecimals]);
+
+  const handleSwap = async () => {
+    if (!address || !fromAmount || !toAmount) return;
+    
+    setIsSwapping(true);
+    try {
+      // First approve the token
+      await approveToken(fromToken.address, fromAmount, fromDecimals || 18);
+      toast.success('Token approved!', { id: 'approve' });
+      
+      // Then execute swap
+      await executeSwap(
+        fromToken.address,
+        toToken.address,
+        fromAmount,
+        toAmount,
+        fromDecimals || 18,
+        address
+      );
+      
+      toast.success('Swap successful!', { id: 'swap' });
+      setFromAmount("");
+      setToAmount("");
+      refetchFrom();
+      refetchTo();
+    } catch (error) {
+      console.error('Swap error:', error);
+    } finally {
+      setIsSwapping(false);
+    }
+  };
+
+  const switchTokens = () => {
+    setFromToken(toToken);
+    setToToken(fromToken);
+    setFromAmount(toAmount);
+    setToAmount(fromAmount);
+  };
 
   return (
     <div className="min-h-screen pt-32 pb-20">
@@ -31,13 +112,14 @@ const Swap = () => {
                   onChange={(e) => setFromAmount(e.target.value)}
                   className="bg-transparent border-none text-2xl font-semibold p-0 focus-visible:ring-0"
                 />
-                <Button variant="secondary" className="gap-2">
-                  <div className="w-6 h-6 rounded-full bg-primary" />
-                  ETH
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
+                <TokenSelector
+                  selectedToken={fromToken}
+                  onSelectToken={setFromToken}
+                />
               </div>
-              <p className="text-sm text-muted-foreground">Balance: 0.0</p>
+              <p className="text-sm text-muted-foreground">
+                Balance: {isConnected ? fromBalance : '0.0000'}
+              </p>
             </div>
           </div>
 
@@ -46,6 +128,7 @@ const Swap = () => {
             <Button
               variant="secondary"
               size="icon"
+              onClick={switchTokens}
               className="rounded-full border-4 border-background hover:rotate-180 transition-all duration-300"
             >
               <ArrowDownUp className="w-4 h-4" />
@@ -64,13 +147,14 @@ const Swap = () => {
                   onChange={(e) => setToAmount(e.target.value)}
                   className="bg-transparent border-none text-2xl font-semibold p-0 focus-visible:ring-0"
                 />
-                <Button variant="secondary" className="gap-2">
-                  <div className="w-6 h-6 rounded-full bg-accent" />
-                  USDC
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
+                <TokenSelector
+                  selectedToken={toToken}
+                  onSelectToken={setToToken}
+                />
               </div>
-              <p className="text-sm text-muted-foreground">Balance: 0.0</p>
+              <p className="text-sm text-muted-foreground">
+                Balance: {isConnected ? toBalance : '0.0000'}
+              </p>
             </div>
           </div>
 
@@ -90,9 +174,28 @@ const Swap = () => {
             </div>
           </div>
 
-          <Button className="w-full gradient-primary glow-primary transition-smooth hover:scale-105" size="lg">
-            Connect Wallet
-          </Button>
+          {!isConnected ? (
+            <ConnectButton.Custom>
+              {({ openConnectModal }) => (
+                <Button 
+                  onClick={openConnectModal}
+                  className="w-full gradient-primary glow-primary transition-smooth hover:scale-105" 
+                  size="lg"
+                >
+                  Connect Wallet
+                </Button>
+              )}
+            </ConnectButton.Custom>
+          ) : (
+            <Button 
+              onClick={handleSwap}
+              disabled={!fromAmount || !toAmount || isSwapping}
+              className="w-full gradient-primary glow-primary transition-smooth hover:scale-105" 
+              size="lg"
+            >
+              {isSwapping ? 'Swapping...' : 'Swap'}
+            </Button>
+          )}
         </Card>
 
         {/* Recent Swaps */}
