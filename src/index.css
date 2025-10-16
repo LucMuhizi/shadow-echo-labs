@@ -73,7 +73,7 @@ All colors MUST be HSL.
   }
   
   .glass-card-hover {
-    @apply glass-card hover:bg-card/60 hover:border-primary/30 transition-smooth hover:shadow-glow;
+    @apply glass-card hover:bg-card/60 hover:border-primary/30 transition-smooth hover:glow-primary;
   }
   
   .gradient-primary {
@@ -109,7 +109,7 @@ All colors MUST be HSL.
   }
   
   .hover-lift {
-    @apply transition-smooth hover:-translate-y-1 hover:shadow-glow;
+    @apply transition-smooth hover:-translate-y-1 hover:glow-primary;
   }
   
   .hover-glow {
