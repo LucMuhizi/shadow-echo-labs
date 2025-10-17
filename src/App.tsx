@@ -15,6 +15,7 @@ import Vote from "./pages/Vote";
 import Analytics from "./pages/Analytics";
 import Farms from "./pages/Farms";
 import Tokenomics from "./pages/Tokenomics";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
                 <Route path="/vote" element={<Vote />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/tokenomics" element={<Tokenomics />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>

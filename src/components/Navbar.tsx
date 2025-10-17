@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Wallet, LogOut, Copy, Check } from "lucide-react";
+import { Wallet, LogOut, Copy, Check, Shield } from "lucide-react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useWallet } from "@/hooks/useWallet";
+import { useOwnerControls } from "@/hooks/useOwnerControls";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -17,7 +18,10 @@ import {
 const Navbar = () => {
   const location = useLocation();
   const { address, isConnected, chain, balance, disconnect, shortenAddress } = useWallet();
+  const { isOwner } = useOwnerControls();
   const [copied, setCopied] = useState(false);
+
+  const isAnyOwner = isOwner('SDX') || isOwner('VE_SDX') || isOwner('VOTER');
   
   const navItems = [
     { name: "Swap", path: "/swap" },
@@ -97,6 +101,14 @@ const Navbar = () => {
                   )}
                   Copy Address
                 </DropdownMenuItem>
+                {isAnyOwner && (
+                  <Link to="/admin">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Shield className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  </Link>
+                )}
                 <DropdownMenuItem onClick={() => disconnect()} className="cursor-pointer text-destructive">
                   <LogOut className="w-4 h-4 mr-2" />
                   Disconnect

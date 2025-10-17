@@ -31,6 +31,34 @@ export const SDX_TOKEN_ABI = [
     outputs: [{ name: '', type: 'uint256' }],
     type: 'function',
   },
+  {
+    constant: false,
+    inputs: [{ name: '_minter', type: 'address' }],
+    name: 'setMinter',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'minter',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: 'newOwner', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    type: 'function',
+  },
 ] as const;
 
 // Voting Escrow (veSDX) Contract - NFT based
@@ -106,6 +134,27 @@ export const VE_SDX_ABI = [
     ],
     type: 'function',
   },
+  {
+    constant: true,
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: 'newOwner', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: '_account', type: 'address' }],
+    name: 'whitelist',
+    outputs: [],
+    type: 'function',
+  },
 ] as const;
 
 // Voter Contract - Handles gauge voting
@@ -158,6 +207,75 @@ export const VOTER_ABI = [
     outputs: [{ name: '', type: 'uint256' }],
     type: 'function',
   },
+  {
+    constant: false,
+    inputs: [
+      { name: '_pool', type: 'address' },
+      { name: '_gauge', type: 'address' },
+    ],
+    name: 'createGauge',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: '_gauge', type: 'address' }],
+    name: 'killGauge',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: '_gauge', type: 'address' }],
+    name: 'reviveGauge',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [
+      { name: '_gauge', type: 'address' },
+      { name: '_bribe', type: 'address' },
+    ],
+    name: 'setBribe',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [],
+    name: 'distribute',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: '_gauge', type: 'address' }],
+    name: 'distributeForGauge',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [{ name: '_gauge', type: 'address' }],
+    name: 'isAlive',
+    outputs: [{ name: '', type: 'bool' }],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: 'newOwner', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
+    type: 'function',
+  },
 ] as const;
 
 // Gauge Contract - Rewards distribution
@@ -195,6 +313,27 @@ export const GAUGE_ABI = [
     inputs: [{ name: '_account', type: 'address' }],
     name: 'balanceOf',
     outputs: [{ name: '', type: 'uint256' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: '_reward', type: 'address' }],
+    name: 'addReward',
+    outputs: [],
+    type: 'function',
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', type: 'address' }],
+    type: 'function',
+  },
+  {
+    constant: false,
+    inputs: [{ name: 'newOwner', type: 'address' }],
+    name: 'transferOwnership',
+    outputs: [],
     type: 'function',
   },
 ] as const;
